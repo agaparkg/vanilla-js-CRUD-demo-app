@@ -4,9 +4,11 @@ const closeBtn = document.querySelector('.close');
 const addNewUserBtn = document.querySelector('#add-new-btn');
 const form = document.querySelector('form');
 
-closeBtn.addEventListener('click', () => {
+closeBtn.addEventListener('click', closeModalFn);
+
+function closeModalFn() {
   modal.style.display = 'none';
-});
+}
 
 // addNewUserBtn.addEventListener('click', () => {
 //   modal.style.display = 'block';
@@ -32,11 +34,18 @@ function createUsersTable(users) {
   for (let user of users) {
     const { id, fname, lname, age, email, title, avatar } = user;
 
+    // Check if the avatar url starts with 'http', if not, use the fake avatar link as a default value
+    // This validation is not a recommended validation (what is it is something like: 'http://blah-blah').
+    // Custom url validator can be used to validate the url.
+    const validAvatarUrl = avatar.startsWith('http')
+      ? avatar
+      : 'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1220.jpg';
+
     const userRow = `
       <tr>
         <td>${id}</td>
         <td>
-          <img src="${avatar}" alt="user-${id}">
+          <img src="${validAvatarUrl}" alt="user-${id}">
         </td>
         <td>${fname}</td>
         <td>${lname}</td>
@@ -92,12 +101,12 @@ form.addEventListener('submit', (e) => {
     lname: e.target.lname.value,
     title: e.target.title.value,
     age: e.target.age.value,
+    email: e.target.email.value,
     avatar: e.target.avatar.value,
   };
 
-  console.log('new user', newUser);
-
   postNewUser(newUser);
+  closeModalFn();
 });
 
 async function postNewUser(newUser) {
@@ -105,12 +114,16 @@ async function postNewUser(newUser) {
 
   const response = await fetch(url, {
     method: 'POST',
+    // Headers needed to specify what type of content is being sent over to the backend (mockapi endpoint)
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(newUser),
   });
 
-  // if (!response.ok) {
-  //   console.log('Something went wrong!', response);
-  // } else {
-  //   getUsers();
-  // }
+  if (!response.ok) {
+    console.log('Something went wrong!', response);
+  } else {
+    getUsers();
+  }
 }
