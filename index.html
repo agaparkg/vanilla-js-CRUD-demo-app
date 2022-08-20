@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h2>CRUD Users Demo App</h2>
+    <div class="add-new-header">
+      <button id="add-new-btn" onclick="addNewUserFn()">Add New User</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Avatar</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Job Title</th>
+          <th>Email Address</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div id="my-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="close">&times;</span>
+          <h2>Add New Student</h2>
+        </div>
+        <div class="modal-body">
+          <form>
+            <label for="fname">First name:</label><br>
+            <input type="text" id="fname" name="fname" value=""><br>
+            <label for="lname">Last name:</label><br>
+            <input type="text" id="lname" name="lname" value=""><br>
+            <label for="title">Job Title:</label><br>
+            <input type="text" id="title" name="title" value=""><br>
+            <label for="age">Age:</label><br>
+            <input type="number" id="age" name="age" value=""><br>
+            <label for="avatar">Avatar:</label><br>
+            <input type="text" id="avatar" name="avatar" value=""><br><br>
+            <input id="submit-btn" type="submit" value="Submit">
+          </form>
+      </div>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
