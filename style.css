@@ -12,7 +12,7 @@ table {
 td,
 th {
   border: 1px solid #dddddd;
-  text-align: left;
+  text-align: center;
   padding: 8px;
 }
 
@@ -72,6 +72,11 @@ th {
   text-align: center;
 }
 
+.modal-body form input {
+  width: 80%;
+  padding: 5px 10px;
+}
+
 #submit-btn {
   border: none;
   padding: 10px;
@@ -101,5 +106,51 @@ th {
   }
   to {
     opacity: 1;
+  }
+}
+
+.actions button {
+  padding: 8px 10px;
+  border: none;
+  color: white;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+.edit-btn {
+  background-color: gray;
+}
+
+.delete-btn {
+  background-color: red;
+}
+
+.alert {
+  position: relative;
+}
+
+.alert span {
+  display: none;
+  position: absolute;
+  text-align: center;
+  background-color: rgb(45, 219, 45);
+  width: 50%;
+  padding: 5px 10px;
+  left: 25%;
+  border-radius: 5px;
+  color: white;
+  font-size: 16px;
+  animation: cssAnimation 3s ease-in-out;
+}
+
+@keyframes cssAnimation {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }

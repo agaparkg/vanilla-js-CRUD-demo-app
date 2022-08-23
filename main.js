@@ -3,6 +3,11 @@ const modal = document.querySelector('#my-modal');
 const closeBtn = document.querySelector('.close');
 const addNewUserBtn = document.querySelector('#add-new-btn');
 const form = document.querySelector('form');
+const modalHeader = document.querySelector('.modal-header h2');
+const alertMsg = document.querySelector('.alert span');
+const apiUrl = 'https://630028dd9350a1e548eab35e.mockapi.io/anything/here/v1/users/';
+let selectedUserId;
+const formElements = Array.from(form.children);
 
 closeBtn.addEventListener('click', closeModalFn);
 
@@ -15,14 +20,11 @@ function closeModalFn() {
 // });
 
 async function getUsers() {
-  const url = 'https://630028dd9350a1e548eab35e.mockapi.io/anything/here/v1/users';
-
-  const response = await fetch(url, {
+  const response = await fetch(apiUrl, {
     method: 'GET', // default method for fetch is GET
   });
   const data = await response.json();
 
-  // console.log(data);
   createUsersTable(data);
 }
 
@@ -34,10 +36,10 @@ function createUsersTable(users) {
   for (let user of users) {
     const { id, fname, lname, age, email, title, avatar } = user;
 
-    // Check if the avatar url starts with 'http', if not, use the fake avatar link as a default value
-    // This validation is not a recommended validation (what is it is something like: 'http://blah-blah').
-    // Custom url validator can be used to validate the url.
-    const validAvatarUrl = avatar.startsWith('http')
+    // In index.html file, I changed the avatar input type to be url. It is the first step to validate the url.
+    // The second step is to use custom url validator. I added a custom validator function in validateUrl.js file.
+    // isValidUrl('Enter your url here') will validate the url, if invalid url, then it will use default url/avatar below.
+    const validAvatarUrl = isValidUrl(avatar)
       ? avatar
       : 'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1220.jpg';
 
@@ -52,9 +54,9 @@ function createUsersTable(users) {
         <td>${title}</td>
         <td>${email}</td>
         <td>${age}</td>
-        <td>
-          <button onclick="editUser(${id})">Edit</button>
-          <button onclick="deleteUserFromAPI(${id})">Delete</button>
+        <td class='actions'>
+          <button class='edit-btn' onclick="editUser(${id})">Edit</button>
+          <button class='delete-btn' onclick="deleteUserFromAPI(${id})">Delete</button>
         </td>
       </tr>
     `;
@@ -63,11 +65,9 @@ function createUsersTable(users) {
   }
 }
 
-// fetch with a PUT method - Edit
-// fetch with a DELETE method - Delete
 async function deleteUserFromAPI(id) {
-  // const url = `https://630028dd9350a1e548eab35e.mockapi.io/anything/here/v1/users/${id}`;
-  const url = 'https://630028dd9350a1e548eab35e.mockapi.io/anything/here/v1/users/' + id;
+  // const url = `${apiUrl}${id}`;
+  const url = apiUrl + id;
 
   const response = await fetch(url, {
     method: 'DELETE',
@@ -76,27 +76,42 @@ async function deleteUserFromAPI(id) {
   if (!response.ok) {
     console.log('Something went wrong!', response);
   } else {
+    alertMsg.style.display = 'block';
+    alertMsg.innerHTML = 'User has been successfully deleted!';
+    setTimeout(() => {
+      alertMsg.style.display = 'none';
+    }, 3000);
     getUsers();
   }
 }
-// fetch with a POST method - Add New User
 
-function editUser(id) {
-  console.log('edit user btn', id);
+async function editUser(id) {
+  const { fname, lname, title, age, email, avatar } = form.children;
+  modal.style.display = 'block';
+  modalHeader.innerHTML = 'Edit User';
+  selectedUserId = id;
+  const user = await (await fetch(apiUrl + id)).json();
+
+  fname.value = user.fname;
+  lname.value = user.lname;
+  title.value = user.title;
+  age.value = user.age;
+  email.value = user.email;
+  avatar.value = user.avatar;
 }
 
-// function deleteUser(id) {
-//   deleteUserFromAPI(id);
-// }
-
 function addNewUserFn() {
+  formElements.forEach((i) => {
+    if (i.value && i.id !== 'submit-btn') i.value = '';
+  });
   modal.style.display = 'block';
+  modalHeader.innerHTML = 'Add New User';
 }
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
 
-  const newUser = {
+  const userInfo = {
     fname: e.target.fname.value,
     lname: e.target.lname.value,
     title: e.target.title.value,
@@ -105,25 +120,34 @@ form.addEventListener('submit', (e) => {
     avatar: e.target.avatar.value,
   };
 
-  postNewUser(newUser);
+  createUpdateUser(userInfo);
   closeModalFn();
 });
 
-async function postNewUser(newUser) {
-  const url = 'https://630028dd9350a1e548eab35e.mockapi.io/anything/here/v1/users/';
+// fetch with a POST method - Add New User
+async function createUpdateUser(userInfo) {
+  const addBtnClicked = modalHeader.innerHTML === 'Add New User';
+
+  const url = addBtnClicked ? apiUrl : apiUrl + selectedUserId;
 
   const response = await fetch(url, {
-    method: 'POST',
+    method: addBtnClicked ? 'POST' : 'PUT',
     // Headers needed to specify what type of content is being sent over to the backend (mockapi endpoint)
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(newUser),
+    body: JSON.stringify(userInfo),
   });
 
   if (!response.ok) {
     console.log('Something went wrong!', response);
   } else {
+    const text = addBtnClicked ? 'created' : 'updated';
+    alertMsg.style.display = 'block';
+    alertMsg.innerHTML = `User has been successfully ${text}!`;
+    setTimeout(() => {
+      alertMsg.style.display = 'none';
+    }, 3000);
     getUsers();
   }
 }

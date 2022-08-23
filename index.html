@@ -9,6 +9,9 @@
   </head>
   <body>
     <h2>CRUD Users Demo App</h2>
+    <div class="alert">
+      <span>deleted</span>
+    </div>
     <div class="add-new-header">
       <button id="add-new-btn" onclick="addNewUserFn()">Add New User</button>
     </div>
@@ -31,26 +34,27 @@
       <div class="modal-content">
         <div class="modal-header">
           <span class="close">&times;</span>
-          <h2>Add New Student</h2>
+          <h2></h2>
         </div>
         <div class="modal-body">
           <form>
             <label for="fname">First name:</label><br>
-            <input type="text" id="fname" name="fname" value=""><br>
+            <input required type="text" id="fname" name="fname" value=""><br>
             <label for="lname">Last name:</label><br>
-            <input type="text" id="lname" name="lname" value=""><br>
+            <input required type="text" id="lname" name="lname" value=""><br>
             <label for="title">Job Title:</label><br>
             <input type="text" id="title" name="title" value=""><br>
             <label for="age">Age:</label><br>
             <input type="number" id="age" name="age" value=""><br>
             <label for="email">Email:</label><br>
-            <input type="email" id="email" name="email" value=""><br>
+            <input required type="email" id="email" name="email" value=""><br>
             <label for="avatar">Avatar:</label><br>
-            <input type="text" id="avatar" name="avatar" value=""><br><br>
+            <input type="url" id="avatar" name="avatar" value=""><br><br>
             <input id="submit-btn" type="submit" value="Submit">
           </form>
       </div>
     </div>
     <script src="main.js"></script>
+    <script src="validateUrl.js"></script>
   </body>
 </html>
